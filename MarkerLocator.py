@@ -253,7 +253,7 @@ def mainTwo():
         cd.processFrame()
         cd.showProcessedFrame()
         cd.handleKeyboardEvents()
-        y = cd.returnPosition     
+        y = cd.returnPosition()     
         print y
 
         
