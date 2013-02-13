@@ -1,3 +1,7 @@
+#!/usr/bin/env python
+import roslib; roslib.load_manifest('frobitLocator')
+import rospy
+from geometry_msgs.msg import Point
 from time import time
 import sys
 import numpy as np
@@ -161,7 +165,7 @@ class TrackerInWindowMode:
         
         xm = xm + self.subImagePosition[0]
         ym = ym + self.subImagePosition[1]
-        print((xm, ym))
+        #print((xm, ym))
         return [xm, ym]
         
     def showCroppedImage(self):
@@ -232,9 +236,9 @@ class CameraDriver:
             self.cnt = self.cnt + 1
     
     def returnPosition(self):
-        return self.oldLocation
+        return self.oldLocations
 
-def mainTwo():
+def main():
     
     t0 = time()
     t1 = time()
@@ -243,7 +247,15 @@ def mainTwo():
     print 'function vers1 takes %f' %(t1-t0)
     print 'function vers2 takes %f' %(t2-t1)
     
-    cd = CameraDriver([5, 6])
+    toFind = [7,4, 5 ,2]    
+    
+    pup = [ ]   
+ 
+    for i in toFind:
+        pup.append( rospy.Publisher('positionPuplisher' + str(i), Point)  )       
+       
+    rospy.init_node('FrobitLocator')   
+    cd = CameraDriver(toFind)
     t0 = time()
      
     while cd.running:
@@ -253,11 +265,16 @@ def mainTwo():
         cd.processFrame()
         cd.showProcessedFrame()
         cd.handleKeyboardEvents()
-        y = cd.returnPosition()     
-        print y
-
+        x = cd.returnPosition()     
         
+        j = 0        
+        for i in toFind:
+            print 'x%i %i  y%i %i' %(i,x[j][0],i, x[j][1])
+            #ros function        
+            pup[j].publish(  Point( x[j][0], x[j][1], 0 )  )
+            j = j + 1                
+            
     print("Stopping")
 
 
-mainTwo()
+main()
