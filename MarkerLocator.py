@@ -220,7 +220,7 @@ class CameraDriver:
         
     def handleKeyboardEvents(self):
         key = cv.WaitKey(20)
-        if key == 1048603: # Esc
+        if key == 27: # Esc
             self.running = False
         if key == 1048690: # r
             print("Resetting")
@@ -230,7 +230,9 @@ class CameraDriver:
             print("Saving image")
             cv.SaveImage("output/filename%03d.png" % self.cnt, self.currentFrame)
             self.cnt = self.cnt + 1
-
+    
+    def returnPosition(self):
+        return self.oldLocation
 
 def mainTwo():
     
@@ -246,12 +248,14 @@ def mainTwo():
      
     while cd.running:
         (t1, t0) = (t0, time())
-        print "time for one iteration: %f" % (t0 - t1)
+      #  print "time for one iteration: %f" % (t0 - t1)
         cd.getImage()
         cd.processFrame()
         cd.showProcessedFrame()
         cd.handleKeyboardEvents()
-        print 
+        y = cd.returnPosition     
+        print y
+
         
     print("Stopping")
 
